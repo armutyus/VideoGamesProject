@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "988428246558",
+    "project_id": "kotlinvideogamesproject",
+    "storage_bucket": "kotlinvideogamesproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988428246558:android:c0b51b425d5133ec42180f",
+        "android_client_info": {
+          "package_name": "com.armutyus.videogamesproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988428246558-0c3dqo3tbnmnskuacd5u70ujdg3a55b4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKSpeIBn1Ct6wHTivpDDI_1szIED74RPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988428246558-0c3dqo3tbnmnskuacd5u70ujdg3a55b4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

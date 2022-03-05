@@ -1,4 +1,4 @@
-package com.armutyus.videogamesproject.ui.home
+package com.armutyus.videogamesproject.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
