@@ -10,20 +10,21 @@ import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.databinding.DetailsFragmentBinding
 import com.armutyus.videogamesproject.viewmodel.DetailsViewModel
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(R.layout.details_fragment) {
 
     private var fragmentBinding: DetailsFragmentBinding? = null
-    private val binding get() = fragmentBinding!!
-
     private lateinit var viewModel: DetailsViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
-        fragmentBinding = DetailsFragmentBinding.inflate(inflater,container,false)
-        return binding.root
+        val binding = DetailsFragmentBinding.bind(view)
+        fragmentBinding = binding
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragmentBinding = null
     }
 
 

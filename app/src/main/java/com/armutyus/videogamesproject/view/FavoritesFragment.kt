@@ -7,28 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.databinding.FragmentFavoritesBinding
 import com.armutyus.videogamesproject.viewmodel.FavoritesViewModel
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
     private var fragmentBinding: FragmentFavoritesBinding? = null
-    private val binding get() = fragmentBinding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val favoritesViewModel =
             ViewModelProvider(this)[FavoritesViewModel::class.java]
-        fragmentBinding = FragmentFavoritesBinding.inflate(inflater, container, false)
 
-        val textView: TextView = binding.textFavorites
-        favoritesViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        val binding = FragmentFavoritesBinding.bind(view)
+        fragmentBinding = binding
 
-        return binding.root
     }
 
     override fun onDestroyView() {
