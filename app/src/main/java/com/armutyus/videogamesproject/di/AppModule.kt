@@ -1,8 +1,14 @@
 package com.armutyus.videogamesproject.di
 
 import android.content.Context
+import androidx.room.Room
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.api.VideoGamesAPI
+import com.armutyus.videogamesproject.repo.VideoGamesRepo
+import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
+import com.armutyus.videogamesproject.roomdb.GamesDB
+import com.armutyus.videogamesproject.roomdb.GamesDao
+import com.armutyus.videogamesproject.util.Constants.BASE_URL
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import dagger.Module
@@ -20,17 +26,28 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun injectRoomDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
+        context,GamesDB::class.java,"GamesDB"
+    ).build()
+
+    @Singleton
+    @Provides
+    fun injectDao(database: GamesDB) = database.gamesDao()
+
+    @Singleton
+    @Provides
     fun injectRetrofitApi(): VideoGamesAPI {
 
-        val baseURL = "https://api.rawg.io/api/"
         return Retrofit.Builder()
-            .baseUrl(baseURL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(VideoGamesAPI::class.java)
     }
 
-    //fun injectNormalRepo(api: VideoGamesAPI) = VideoGamesRepo(api) as VideoGamesRepoInterface
+    @Singleton
+    @Provides
+    fun injectRepo(gamesDao: GamesDao, videoGamesAPI: VideoGamesAPI) = VideoGamesRepo(gamesDao, videoGamesAPI) as VideoGamesRepoInterface
 
     @Singleton
     @Provides
