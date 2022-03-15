@@ -7,4 +7,5 @@ data class GameDetails(
     val metacritic: Int,
     val name: String,
     val released: String,
+    val rating: Double,
 )

@@ -13,6 +13,7 @@ class VideoGamesRepo @Inject constructor(
     private val gamesDao: GamesDao,
     private val videoGamesAPI: VideoGamesAPI
 ) : VideoGamesRepoInterface {
+
     override suspend fun insertGames(games: Games) {
         gamesDao.insert(games)
     }
