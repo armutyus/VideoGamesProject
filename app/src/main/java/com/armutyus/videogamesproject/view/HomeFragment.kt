@@ -13,6 +13,7 @@ import com.armutyus.videogamesproject.adapter.ViewPagerAdapter
 import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
+import me.relex.circleindicator.CircleIndicator3
 import javax.inject.Inject
 
 class HomeFragment @Inject constructor(
@@ -31,8 +32,12 @@ class HomeFragment @Inject constructor(
 
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
 
-        _binding?.viewPager?.adapter = viewPagerAdapter
-        _binding?.circleIndicator?.setViewPager(_binding?.viewPager)
+        val viewPager = _binding?.viewPager
+        viewPager?.adapter = viewPagerAdapter
+        val indicator3 = view.findViewById<CircleIndicator3>(R.id.circleIndicator)
+        indicator3?.setViewPager(viewPager)
+
+        viewPagerAdapter.registerAdapterDataObserver(indicator3.adapterDataObserver)
 
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
@@ -53,7 +58,7 @@ class HomeFragment @Inject constructor(
 
                     val videoGamesHomeViewPager = it.data?.results?.toList()?.subList(0,3)
                     viewPagerAdapter.videoGamesList = videoGamesHomeViewPager!!
-                    val videoGamesHome = it.data.results.toList()
+                    val videoGamesHome = it.data.results.toList().subList(3,20)
                     homeRecyclerViewAdapter.videoGamesList = videoGamesHome
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE

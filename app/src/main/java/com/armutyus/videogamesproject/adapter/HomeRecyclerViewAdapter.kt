@@ -32,7 +32,7 @@ class HomeRecyclerViewAdapter @Inject constructor(
     private val recyclerListDiffer = AsyncListDiffer(this, diffUtil)
 
     var videoGamesList: List<VideoGames>
-        get() = recyclerListDiffer.currentList.subList(3,videoGamesList.lastIndex)
+        get() = recyclerListDiffer.currentList
         set(value) = recyclerListDiffer.submitList(value)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRecyclerViewHolder {
@@ -51,11 +51,11 @@ class HomeRecyclerViewAdapter @Inject constructor(
             videoGamesText.text = videoGames.name
             videoGamesRatingText.text = videoGames.rating.toString()
             videoGamesReleasedText.text = videoGames.released
-            glide.load(videoGames.background_image).into(videoGamesImage)
+            glide.load(videoGames.background_image).circleCrop().into(videoGamesImage)
         }
     }
 
     override fun getItemCount(): Int {
-        return videoGamesList.subList(3,videoGamesList.lastIndex).size
+        return videoGamesList.size
     }
 }

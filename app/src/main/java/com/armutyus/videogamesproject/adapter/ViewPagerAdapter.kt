@@ -47,7 +47,7 @@ class ViewPagerAdapter @Inject constructor(
         val videoGames = videoGamesList[position]
         holder.itemView.apply {
             videoGamesText.text = videoGames.name
-            glide.load(videoGames.background_image).into(videoGamesImage)
+            glide.load(videoGames.background_image).centerCrop().into(videoGamesImage)
         }
     }
 

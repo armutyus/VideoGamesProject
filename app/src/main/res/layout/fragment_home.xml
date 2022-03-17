@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EDACAC"
     tools:context=".view.HomeFragment">
 
     <androidx.viewpager2.widget.ViewPager2
@@ -16,7 +17,7 @@
     <me.relex.circleindicator.CircleIndicator3
         android:id="@+id/circleIndicator"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="10dp"
         android:layout_below="@+id/viewPager"
         android:visibility="gone"/>
 
@@ -26,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/circleIndicator"
+        android:layout_marginBottom="45dp"
         android:visibility="gone"/>
 
     <LinearLayout
