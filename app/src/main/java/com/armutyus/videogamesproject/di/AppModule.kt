@@ -9,11 +9,14 @@ import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
 import com.armutyus.videogamesproject.roomdb.GamesDB
 import com.armutyus.videogamesproject.roomdb.GamesDao
 import com.armutyus.videogamesproject.util.Constants.BASE_URL
+import com.armutyus.videogamesproject.view.GamesFragmentFactory
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
@@ -43,6 +46,12 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(VideoGamesAPI::class.java)
+    }
+
+    @EntryPoint
+    @InstallIn(ActivityComponent::class)
+    interface GamesFragmentFactoryEntryPoint {
+        fun getFragmentFactory(): GamesFragmentFactory
     }
 
     @Singleton
