@@ -1,7 +1,9 @@
 package com.armutyus.videogamesproject.view
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -11,15 +13,18 @@ import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
 import com.armutyus.videogamesproject.adapter.ViewPagerAdapter
 import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
+import com.armutyus.videogamesproject.model.VideoGames
+import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
 import me.relex.circleindicator.CircleIndicator3
+import java.lang.Exception
 import javax.inject.Inject
 
 class HomeFragment @Inject constructor(
     private val viewPagerAdapter: ViewPagerAdapter,
     private val homeRecyclerViewAdapter: HomeRecyclerViewAdapter
-): Fragment(R.layout.fragment_home), SearchView.OnQueryTextListener {
+) : Fragment(R.layout.fragment_home), SearchView.OnQueryTextListener {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
@@ -32,10 +37,9 @@ class HomeFragment @Inject constructor(
 
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
 
-        val viewPager = _binding?.viewPager
-        viewPager?.adapter = viewPagerAdapter
+        _binding?.viewPager?.adapter = viewPagerAdapter
         val indicator3 = view.findViewById<CircleIndicator3>(R.id.circleIndicator)
-        indicator3?.setViewPager(viewPager)
+        indicator3?.setViewPager(_binding?.viewPager)
 
         viewPagerAdapter.registerAdapterDataObserver(indicator3.adapterDataObserver)
 
@@ -56,19 +60,17 @@ class HomeFragment @Inject constructor(
             when (it.status) {
                 Status.SUCCESS -> {
 
-                    val videoGamesHomeViewPager = it.data?.results?.toList()?.subList(0,3)
-                    viewPagerAdapter.videoGamesList = videoGamesHomeViewPager!!
-                    val videoGamesHome = it.data.results.toList().subList(3,20)
-                    homeRecyclerViewAdapter.videoGamesList = videoGamesHome
+                    val videoGamesList = it.data?.results?.toList()
+                    viewPagerAdapter.videoGamesList = videoGamesList?.subList(0, 3)!!
+                    homeRecyclerViewAdapter.videoGamesList =
+                        videoGamesList.subList(3, videoGamesList.size)
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
                     _binding?.homeRecyclerView?.visibility = View.VISIBLE
                     _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
-                    /*homeViewModel.insertGames(Games(
-
-                    ))*/
+                    storeInRoom(videoGamesList)
 
                 }
 
@@ -113,6 +115,27 @@ class HomeFragment @Inject constructor(
 
     override fun onQueryTextChange(newText: String?): Boolean {
         TODO("Not yet implemented")
+    }
+
+    private fun storeInRoom(list: List<VideoGames>) {
+        var i = 0
+        while (i < list.size) {
+
+            val image = list[i].background_image
+            val name = list[i].name
+            val rating = list[i].rating
+            val released = list[i].released
+            val metacritic = list[i].metacritic
+            val favorite = false
+            val id = list[i].id
+
+            homeViewModel.insertGames(
+                Games(image, name, rating, released, metacritic, favorite, id)
+            )
+
+            i += 1
+
+        }
     }
 
     override fun onDestroyView() {

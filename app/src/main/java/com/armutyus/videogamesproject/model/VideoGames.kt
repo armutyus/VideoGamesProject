@@ -5,5 +5,6 @@ data class VideoGames(
     val id: Int,
     val name: String,
     val rating: Double,
+    val metacritic: Int,
     val released: String,
 )

@@ -10,6 +10,8 @@ import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +21,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun insertGames(games: Games) =
-        viewModelScope.launch { repoInterface.insertGames(games) }
+        CoroutineScope(Dispatchers.IO).launch { repoInterface.insertGames(games) }
 
     private val gamesResponse = MutableLiveData<Resource<VideoGamesResponse>>()
     val gamesResponseList: LiveData<Resource<VideoGamesResponse>>

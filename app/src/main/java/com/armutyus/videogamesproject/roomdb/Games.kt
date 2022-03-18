@@ -9,7 +9,6 @@ data class Games(
     val name: String,
     val rating: Double,
     val released: String,
-    val description: String,
     val metacritic: Int,
     val favorite: Boolean,
     @PrimaryKey
