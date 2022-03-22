@@ -18,7 +18,6 @@ import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
 import me.relex.circleindicator.CircleIndicator3
-import java.lang.Exception
 import javax.inject.Inject
 
 class HomeFragment @Inject constructor(
@@ -53,6 +52,7 @@ class HomeFragment @Inject constructor(
     override fun onResume() {
         super.onResume()
         homeViewModel.makeGamesResponse()
+        homeViewModel.getGamesList()
     }
 
     private fun observeLiveData() {
@@ -61,16 +61,14 @@ class HomeFragment @Inject constructor(
                 Status.SUCCESS -> {
 
                     val videoGamesList = it.data?.results?.toList()
-                    viewPagerAdapter.videoGamesList = videoGamesList?.subList(0, 3)!!
-                    homeRecyclerViewAdapter.videoGamesList =
-                        videoGamesList.subList(3, videoGamesList.size)
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
                     _binding?.homeRecyclerView?.visibility = View.VISIBLE
                     _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
-                    storeInRoom(videoGamesList)
+                    storeInRoom(videoGamesList!!)
+                    listsFromRoom()
 
                 }
 
@@ -110,11 +108,41 @@ class HomeFragment @Inject constructor(
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
-        TODO("Not yet implemented")
+    override fun onQueryTextChange(searchString: String?): Boolean {
+        if (searchString?.length!! >= 3) {
+
+            _binding?.viewPager?.visibility = View.GONE
+            _binding?.circleIndicator?.visibility = View.GONE
+            _binding?.homeRecyclerView?.visibility = View.VISIBLE
+            _binding?.linearLayoutSearchError?.visibility = View.GONE
+            _binding?.linearLayoutLoading?.visibility = View.GONE
+            searchDatabase(searchString)
+
+            homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner, Observer {
+                val searchList = it?.toList()
+                homeRecyclerViewAdapter.videoGamesList = searchList!!
+            })
+
+        } else {
+
+            _binding?.viewPager?.visibility = View.VISIBLE
+            _binding?.circleIndicator?.visibility = View.VISIBLE
+            _binding?.homeRecyclerView?.visibility = View.VISIBLE
+            _binding?.linearLayoutSearchError?.visibility = View.GONE
+            _binding?.linearLayoutLoading?.visibility = View.GONE
+            listsFromRoom()
+            return false
+        }
+
+        return true
+    }
+
+    private fun searchDatabase(searchString: String) {
+        val searchQuery = "%$searchString%"
+        homeViewModel.searchGamesList(searchQuery)
     }
 
     private fun storeInRoom(list: List<VideoGames>) {
@@ -126,16 +154,28 @@ class HomeFragment @Inject constructor(
             val rating = list[i].rating
             val released = list[i].released
             val metacritic = list[i].metacritic
+            val description = ""
             val favorite = false
             val id = list[i].id
 
             homeViewModel.insertGames(
-                Games(image, name, rating, released, metacritic, favorite, id)
+                Games(image, name, rating, released, metacritic, description, favorite, id)
             )
 
             i += 1
 
         }
+
+    }
+
+    private fun listsFromRoom() {
+
+        homeViewModel.videoGamesList.observe(viewLifecycleOwner, Observer {
+            val videoGamesFromRoom = it?.toList()
+            homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom?.subList(3,it.size)!!
+            viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0,3)
+        })
+
     }
 
     override fun onDestroyView() {

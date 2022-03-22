@@ -20,21 +20,39 @@ class HomeViewModel @Inject constructor(
     private val repoInterface: VideoGamesRepoInterface
 ) : ViewModel() {
 
-    fun insertGames(games: Games) =
-        CoroutineScope(Dispatchers.IO).launch { repoInterface.insertGames(games) }
-
     private val gamesResponse = MutableLiveData<Resource<VideoGamesResponse>>()
     val gamesResponseList: LiveData<Resource<VideoGamesResponse>>
         get() = gamesResponse
 
-    /*private val videoGames = MutableLiveData<VideoGames>()
-    val videoGamesList: LiveData<VideoGames>
-        get() = videoGames*/
+    private val videoGames = MutableLiveData<List<Games>>()
+    val videoGamesList: LiveData<List<Games>>
+        get() = videoGames
+
+    private val searchVideoGames = MutableLiveData<List<Games>>()
+    val searchGamesFromRoomList: LiveData<List<Games>>
+        get() = searchVideoGames
 
     fun makeGamesResponse() {
         viewModelScope.launch {
             val response = repoInterface.gamesFromApi()
             gamesResponse.value = response
+        }
+    }
+
+    fun insertGames(games: Games) =
+        CoroutineScope(Dispatchers.IO).launch { repoInterface.insertGames(games) }
+
+    fun getGamesList() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val videoGamesFromRoom = repoInterface.getGamesList()
+            videoGames.postValue(videoGamesFromRoom)
+        }
+    }
+
+    fun searchGamesList(searchString: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val searchGamesInRoom = repoInterface.searchGames(searchString)
+            searchVideoGames.postValue(searchGamesInRoom)
         }
     }
 

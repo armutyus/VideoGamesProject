@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.model.VideoGames
+import com.armutyus.videogamesproject.roomdb.Games
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject
 
@@ -19,19 +20,19 @@ class ViewPagerAdapter @Inject constructor(
 
     class ViewPagerViewHolder(view: View): RecyclerView.ViewHolder(view)
 
-    private val diffUtil = object : DiffUtil.ItemCallback<VideoGames>() {
-        override fun areItemsTheSame(oldItem: VideoGames, newItem: VideoGames): Boolean {
+    private val diffUtil = object : DiffUtil.ItemCallback<Games>() {
+        override fun areItemsTheSame(oldItem: Games, newItem: Games): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: VideoGames, newItem: VideoGames): Boolean {
+        override fun areContentsTheSame(oldItem: Games, newItem: Games): Boolean {
             return oldItem == newItem
         }
     }
 
     private val recyclerListDiffer = AsyncListDiffer(this, diffUtil)
 
-    var videoGamesList: List<VideoGames>
+    var videoGamesList: List<Games>
         get() = recyclerListDiffer.currentList
         set(value) = recyclerListDiffer.submitList(value)
 

@@ -15,11 +15,11 @@ interface GamesDao {
     fun getGamesById(id: Int): Games?*/
 
     @Query("SELECT * FROM Games")
-    fun getGamesList(): LiveData<List<Games>>
+    fun getGamesList(): MutableList<Games>
 
     @Query("SELECT * FROM Games WHERE favorite = 1")
     fun getFavoriteGamesList(): LiveData<List<Games>>
 
-    @Query("SELECT * FROM Games WHERE name LIKE :searchString ")
-    fun searchGames(searchString: String): LiveData<List<Games>>
+    @Query("SELECT * FROM Games WHERE name LIKE :searchString")
+    fun searchGames(searchString: String): MutableList<Games>
 }

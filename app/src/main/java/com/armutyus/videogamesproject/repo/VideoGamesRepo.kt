@@ -26,7 +26,7 @@ class VideoGamesRepo @Inject constructor(
         return videoGamesAPI.getGamesDetails(id)
     }
 
-    override fun getGamesList(): LiveData<List<Games>> {
+    override fun getGamesList(): MutableList<Games> {
         return gamesDao.getGamesList()
     }
 
@@ -34,7 +34,7 @@ class VideoGamesRepo @Inject constructor(
         return gamesDao.getFavoriteGamesList()
     }
 
-    override fun searchGames(searchString: String): LiveData<List<Games>> {
+    override fun searchGames(searchString: String): MutableList<Games> {
         return gamesDao.searchGames(searchString)
     }
 

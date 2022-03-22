@@ -14,11 +14,11 @@ interface VideoGamesRepoInterface {
 
     suspend fun getGamesById(id: Int): GameDetails
 
-    fun getGamesList(): LiveData<List<Games>>
+    fun getGamesList(): MutableList<Games>
 
     fun getFavoriteGamesList(): LiveData<List<Games>>
 
-    fun searchGames(searchString: String): LiveData<List<Games>>
+    fun searchGames(searchString: String): MutableList<Games>
 
     suspend fun gamesFromApi(): Resource<VideoGamesResponse>
 }
