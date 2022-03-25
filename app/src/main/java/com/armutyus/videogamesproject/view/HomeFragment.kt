@@ -124,6 +124,9 @@ class HomeFragment @Inject constructor(
             homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner, Observer {
                 val searchList = it?.toList()
                 homeRecyclerViewAdapter.videoGamesList = searchList!!
+
+                //if searchGamesFromRoomList == 0 error view visible
+
             })
 
         } else {
