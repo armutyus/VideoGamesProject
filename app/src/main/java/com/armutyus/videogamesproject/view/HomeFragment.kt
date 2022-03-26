@@ -130,7 +130,10 @@ class HomeFragment @Inject constructor(
                 val searchList = it?.toList()
                 homeRecyclerViewAdapter.videoGamesList = searchList!!
 
-                //if searchGamesFromRoomList == 0 error view visible
+                if (searchList.isEmpty()) {
+                    _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
+                    _binding?.linearLayoutLoading?.visibility = View.GONE
+                }
 
             }
 
