@@ -7,9 +7,6 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenCreated
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
@@ -19,7 +16,6 @@ import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
 import me.relex.circleindicator.CircleIndicator3
 import javax.inject.Inject
 
