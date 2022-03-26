@@ -5,6 +5,7 @@ import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.model.VideoGamesResponse
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface VideoGamesRepoInterface {
 
@@ -14,11 +15,11 @@ interface VideoGamesRepoInterface {
 
     suspend fun getGamesById(id: Int): GameDetails
 
-    fun getGamesList(): MutableList<Games>
+    fun getGamesList(): Flow<List<Games>>
 
-    fun getFavoriteGamesList(): LiveData<List<Games>>
+    fun getFavoriteGamesList(): Flow<List<Games>>
 
-    fun searchGames(searchString: String): MutableList<Games>
+    fun searchGames(searchString: String): Flow<List<Games>>
 
     suspend fun gamesFromApi(): Resource<VideoGamesResponse>
 }
