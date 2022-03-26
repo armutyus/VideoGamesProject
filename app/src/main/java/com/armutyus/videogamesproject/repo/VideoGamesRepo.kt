@@ -7,6 +7,7 @@ import com.armutyus.videogamesproject.model.VideoGamesResponse
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.roomdb.GamesDao
 import com.armutyus.videogamesproject.util.Resource
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class VideoGamesRepo @Inject constructor(
@@ -26,15 +27,15 @@ class VideoGamesRepo @Inject constructor(
         return videoGamesAPI.getGamesDetails(id)
     }
 
-    override fun getGamesList(): MutableList<Games> {
+    override fun getGamesList(): Flow<List<Games>> {
         return gamesDao.getGamesList()
     }
 
-    override fun getFavoriteGamesList(): LiveData<List<Games>> {
+    override fun getFavoriteGamesList(): Flow<List<Games>> {
         return gamesDao.getFavoriteGamesList()
     }
 
-    override fun searchGames(searchString: String): MutableList<Games> {
+    override fun searchGames(searchString: String): Flow<List<Games>> {
         return gamesDao.searchGames(searchString)
     }
 
