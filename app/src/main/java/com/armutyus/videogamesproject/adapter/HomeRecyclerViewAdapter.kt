@@ -54,6 +54,7 @@ class HomeRecyclerViewAdapter @Inject constructor(
             videoGamesReleasedText.text = videoGames.released
             glide.load(videoGames.background_image).circleCrop().into(videoGamesImage)
         }
+
     }
 
     override fun getItemCount(): Int {

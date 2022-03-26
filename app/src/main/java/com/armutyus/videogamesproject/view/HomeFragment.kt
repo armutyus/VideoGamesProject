@@ -6,8 +6,10 @@ import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenCreated
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
@@ -17,6 +19,7 @@ import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
+import kotlinx.coroutines.launch
 import me.relex.circleindicator.CircleIndicator3
 import javax.inject.Inject
 
@@ -52,23 +55,27 @@ class HomeFragment @Inject constructor(
     override fun onResume() {
         super.onResume()
         homeViewModel.makeGamesResponse()
-        homeViewModel.getGamesList()
+
     }
 
     private fun observeLiveData() {
-        homeViewModel.gamesResponseList.observe(viewLifecycleOwner, Observer {
+        homeViewModel.gamesResponseList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
 
                     val videoGamesList = it.data?.results?.toList()
+                    val lastIndex = it.data?.results?.lastIndex
+                    println("responseListLastIndex:$lastIndex")
+
+                    storeInRoom(videoGamesList!!)
+                    homeViewModel.getGamesList()
+                    listsFromRoom()
+
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
                     _binding?.homeRecyclerView?.visibility = View.VISIBLE
                     _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
-
-                    storeInRoom(videoGamesList!!)
-                    listsFromRoom()
 
                 }
 
@@ -88,9 +95,11 @@ class HomeFragment @Inject constructor(
                     _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                 }
+
             }
 
-        })
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -121,13 +130,13 @@ class HomeFragment @Inject constructor(
             _binding?.linearLayoutLoading?.visibility = View.GONE
             searchDatabase(searchString)
 
-            homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner, Observer {
+            homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner) {
                 val searchList = it?.toList()
                 homeRecyclerViewAdapter.videoGamesList = searchList!!
 
                 //if searchGamesFromRoomList == 0 error view visible
 
-            })
+            }
 
         } else {
 
@@ -173,11 +182,18 @@ class HomeFragment @Inject constructor(
 
     private fun listsFromRoom() {
 
-        homeViewModel.videoGamesList.observe(viewLifecycleOwner, Observer {
+        homeViewModel.videoGamesList.observe(viewLifecycleOwner) {
             val videoGamesFromRoom = it?.toList()
-            homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom?.subList(3,it.size)!!
-            viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0,3)
-        })
+            val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
+            println("listsFromRoomSize:" + videoGamesFromRoom?.size)
+            println("listCheckSize:$checkSize")
+
+            if (videoGamesFromRoom!!.size == checkSize) {
+                viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0, 3)
+                homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom.subList(3, checkSize)
+            }
+
+        }
 
     }
 
