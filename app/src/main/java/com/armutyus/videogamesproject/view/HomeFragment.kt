@@ -133,6 +133,8 @@ class HomeFragment @Inject constructor(
                 if (searchList.isEmpty()) {
                     _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
+                } else {
+                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                 }
 
             }
