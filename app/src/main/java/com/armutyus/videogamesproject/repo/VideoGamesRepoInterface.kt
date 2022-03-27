@@ -1,6 +1,5 @@
 package com.armutyus.videogamesproject.repo
 
-import androidx.lifecycle.LiveData
 import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.model.VideoGamesResponse
 import com.armutyus.videogamesproject.roomdb.Games
@@ -13,13 +12,15 @@ interface VideoGamesRepoInterface {
 
     suspend fun updateGames(games: Games)
 
-    suspend fun getGamesById(id: Int): GameDetails
+    suspend fun getGamesById(id: Int): Resource<GameDetails>
 
     fun getGamesList(): Flow<List<Games>>
 
     fun getFavoriteGamesList(): Flow<List<Games>>
 
     fun searchGames(searchString: String): Flow<List<Games>>
+
+    fun getGamesByIdRoom(id: Int): Flow<List<Games>>
 
     suspend fun gamesFromApi(): Resource<VideoGamesResponse>
 }

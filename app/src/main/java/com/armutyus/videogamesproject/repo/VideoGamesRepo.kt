@@ -1,6 +1,5 @@
 package com.armutyus.videogamesproject.repo
 
-import androidx.lifecycle.LiveData
 import com.armutyus.videogamesproject.api.VideoGamesAPI
 import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.model.VideoGamesResponse
@@ -23,10 +22,6 @@ class VideoGamesRepo @Inject constructor(
         gamesDao.update(games)
     }
 
-    override suspend fun getGamesById(id: Int): GameDetails {
-        return videoGamesAPI.getGamesDetails(id)
-    }
-
     override fun getGamesList(): Flow<List<Games>> {
         return gamesDao.getGamesList()
     }
@@ -39,9 +34,28 @@ class VideoGamesRepo @Inject constructor(
         return gamesDao.searchGames(searchString)
     }
 
+    override fun getGamesByIdRoom(id: Int): Flow<List<Games>> {
+        return gamesDao.getGamesByIdRoom(id)
+    }
+
     override suspend fun gamesFromApi(): Resource<VideoGamesResponse> {
         return try {
             val response = videoGamesAPI.getGamesResponse()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return@let Resource.success(it)
+                } ?: Resource.error("Error", null)
+            } else {
+                Resource.error("Error", null)
+            }
+        } catch (e: Exception) {
+            Resource.error("No data!", null)
+        }
+    }
+
+    override suspend fun getGamesById(id: Int): Resource<GameDetails> {
+        return try {
+            val response = videoGamesAPI.getGamesDetails(id)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return@let Resource.success(it)

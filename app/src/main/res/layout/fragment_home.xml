@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDACAC"
+    android:background="#F0F4C3"
     tools:context=".view.HomeFragment">
 
     <androidx.viewpager2.widget.ViewPager2
