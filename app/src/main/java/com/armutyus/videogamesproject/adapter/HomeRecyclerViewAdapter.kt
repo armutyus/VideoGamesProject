@@ -5,12 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
+import com.armutyus.videogamesproject.view.HomeFragmentDirections
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject
 
@@ -53,6 +55,13 @@ class HomeRecyclerViewAdapter @Inject constructor(
             videoGamesRatingText.text = videoGames.rating.toString()
             videoGamesReleasedText.text = videoGames.released
             glide.load(videoGames.background_image).circleCrop().into(videoGamesImage)
+        }
+
+        holder.itemView.setOnClickListener {
+
+            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(videoGames.id!!)
+            Navigation.findNavController(it).navigate(action)
+
         }
 
     }

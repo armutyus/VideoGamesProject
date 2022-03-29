@@ -34,7 +34,7 @@ class VideoGamesRepo @Inject constructor(
         return gamesDao.searchGames(searchString)
     }
 
-    override fun getGamesByIdRoom(id: Int): Flow<List<Games>> {
+    override fun getGamesByIdRoom(id: Int): Games {
         return gamesDao.getGamesByIdRoom(id)
     }
 

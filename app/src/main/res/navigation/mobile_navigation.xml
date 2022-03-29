@@ -28,6 +28,10 @@
         android:id="@+id/detailsFragment"
         android:name="com.armutyus.videogamesproject.view.DetailsFragment"
         android:label="details_fragment"
-        tools:layout="@layout/details_fragment" />
+        tools:layout="@layout/details_fragment" >
+        <argument
+            android:name="gameID"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

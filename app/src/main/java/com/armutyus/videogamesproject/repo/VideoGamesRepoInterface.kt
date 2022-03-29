@@ -20,7 +20,7 @@ interface VideoGamesRepoInterface {
 
     fun searchGames(searchString: String): Flow<List<Games>>
 
-    fun getGamesByIdRoom(id: Int): Flow<List<Games>>
+    fun getGamesByIdRoom(id: Int): Games
 
     suspend fun gamesFromApi(): Resource<VideoGamesResponse>
 }

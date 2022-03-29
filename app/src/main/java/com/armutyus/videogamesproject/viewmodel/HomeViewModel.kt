@@ -58,7 +58,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /*fun setChosenCharacter(result: Result) {
-        mutableChosenChar.value = result
-    }*/
 }
