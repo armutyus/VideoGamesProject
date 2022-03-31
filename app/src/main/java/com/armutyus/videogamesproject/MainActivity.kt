@@ -3,9 +3,7 @@ package com.armutyus.videogamesproject
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_favorites
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController,appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 

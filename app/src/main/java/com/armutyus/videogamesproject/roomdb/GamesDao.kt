@@ -12,7 +12,7 @@ interface GamesDao {
     suspend fun update(games: Games)
 
     @Query("SELECT * FROM Games WHERE id = :id")
-    fun getGamesByIdRoom(id: Int): Games
+    fun getGamesByIdRoom(id: Int): Flow<Games>
 
     @Query("SELECT * FROM Games")
     fun getGamesList(): Flow<List<Games>>

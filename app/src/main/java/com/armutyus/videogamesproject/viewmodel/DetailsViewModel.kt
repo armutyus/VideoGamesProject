@@ -8,11 +8,14 @@ import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val repoInterface: VideoGamesRepoInterface
 ) : ViewModel() {
@@ -36,8 +39,8 @@ class DetailsViewModel @Inject constructor(
 
     fun getGamesDetailsById(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            repoInterface.getGamesByIdRoom(id).apply {
-                videoGamesDetails.postValue(this)
+            repoInterface.getGamesByIdRoom(id).collectLatest {
+                videoGamesDetails.postValue(it)
             }
         }
     }
