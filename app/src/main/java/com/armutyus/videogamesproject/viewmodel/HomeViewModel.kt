@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.model.VideoGamesResponse
 import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
 import com.armutyus.videogamesproject.roomdb.Games
@@ -54,6 +55,30 @@ class HomeViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             repoInterface.searchGames(searchString).collectLatest {
                 searchVideoGames.postValue(it)
+            }
+        }
+    }
+
+    //GameDetails
+    private val gamesDetailsResponse = MutableLiveData<Resource<GameDetails>>()
+    val gamesDetails: LiveData<Resource<GameDetails>>
+        get() = gamesDetailsResponse
+
+    private val videoGamesDetails = MutableLiveData<Games>()
+    val videoGamesDetailsById: LiveData<Games>
+        get() = videoGamesDetails
+
+    fun gameDetailResponse(id: Int) {
+        viewModelScope.launch {
+            val response = repoInterface.getGamesById(id)
+            gamesDetailsResponse.value = response
+        }
+    }
+
+    fun getGamesDetailsById(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            repoInterface.getGamesByIdRoom(id).collectLatest {
+                videoGamesDetails.postValue(it)
             }
         }
     }

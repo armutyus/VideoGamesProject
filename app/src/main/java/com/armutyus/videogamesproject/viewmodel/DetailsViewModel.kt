@@ -19,20 +19,10 @@ import javax.inject.Inject
 class DetailsViewModel @Inject constructor(
     private val repoInterface: VideoGamesRepoInterface
 ) : ViewModel() {
-    private val gamesDetailsResponse = MutableLiveData<Resource<GameDetails>>()
-    val gamesDetails: LiveData<Resource<GameDetails>>
-        get() = gamesDetailsResponse
 
     private val videoGamesDetails = MutableLiveData<Games>()
     val videoGamesDetailsById: LiveData<Games>
         get() = videoGamesDetails
-
-    fun gameDetailResponse(id: Int) {
-        viewModelScope.launch {
-            val response = repoInterface.getGamesById(id)
-            gamesDetailsResponse.value = response
-        }
-    }
 
     fun updateGames(games: Games) =
         CoroutineScope(Dispatchers.IO).launch { repoInterface.updateGames(games) }

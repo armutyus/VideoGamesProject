@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
+import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.view.HomeFragmentDirections
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject
@@ -54,7 +55,7 @@ class ViewPagerAdapter @Inject constructor(
         }
 
         holder.itemView.setOnClickListener {
-
+            gameItem = videoGames
             val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(videoGames.id!!)
             Navigation.findNavController(it).navigate(action)
 

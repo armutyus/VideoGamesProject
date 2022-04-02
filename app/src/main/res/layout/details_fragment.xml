@@ -28,7 +28,7 @@
             android:layout_alignEnd="@+id/detailsGameImage"
             android:layout_alignBottom="@+id/detailsGameImage"
             android:layout_marginEnd="10dp"
-            android:onClick="setFavorite"
+            android:clickable="true"
             android:src="@drawable/ic_favorite_false"
             tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
@@ -70,7 +70,6 @@
             android:layout_below="@+id/detailsGameMetacriticText"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="15dp"
             android:textColor="@color/black"
             />
     </RelativeLayout>

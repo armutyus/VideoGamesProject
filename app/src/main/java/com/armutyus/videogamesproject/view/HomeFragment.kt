@@ -12,8 +12,8 @@ import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
 import com.armutyus.videogamesproject.adapter.ViewPagerAdapter
 import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
-import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
+import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
 import me.relex.circleindicator.CircleIndicator3
@@ -26,6 +26,7 @@ class HomeFragment @Inject constructor(
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
+    private var gameID = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +45,11 @@ class HomeFragment @Inject constructor(
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
-        observeLiveData()
+        if (gameItem != null) {
+            listsFromRoom()
+        } else {
+            observeLiveData()
+        }
 
     }
 
@@ -60,12 +65,69 @@ class HomeFragment @Inject constructor(
                 Status.SUCCESS -> {
 
                     val videoGamesList = it.data?.results?.toList()
-                    val lastIndex = it.data?.results?.lastIndex
-                    println("responseListLastIndex:$lastIndex")
+                    var i = 0
+                    while (i < videoGamesList!!.size) {
 
-                    storeInRoom(videoGamesList!!)
+                        gameID = videoGamesList[i].id
+
+                        homeViewModel.gameDetailResponse(gameID)
+
+                        homeViewModel.gamesDetails.observe(viewLifecycleOwner) { gameDetailsResponse ->
+                            when (gameDetailsResponse.status) {
+
+                                Status.SUCCESS -> {
+
+                                    val videoGamesImage =
+                                        gameDetailsResponse.data!!.background_image
+                                    val videoGamesName = gameDetailsResponse.data.name
+                                    val videoGamesID = gameDetailsResponse.data.id
+                                    val videoGamesReleased = gameDetailsResponse.data.released
+                                    val videoGamesRating = gameDetailsResponse.data.rating
+                                    val videoGamesDescription = gameDetailsResponse.data.description
+                                    val videoGamesMetacritic = gameDetailsResponse.data.metacritic
+
+                                    homeViewModel.insertGames(
+                                        Games(
+                                            videoGamesImage,
+                                            videoGamesName,
+                                            videoGamesRating,
+                                            videoGamesReleased,
+                                            videoGamesMetacritic,
+                                            videoGamesDescription,
+                                            false,
+                                            videoGamesID
+                                        )
+                                    )
+
+                                }
+
+                                Status.ERROR -> {
+                                    _binding?.viewPager?.visibility = View.GONE
+                                    _binding?.circleIndicator?.visibility = View.GONE
+                                    _binding?.homeRecyclerView?.visibility = View.GONE
+                                    _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
+                                    _binding?.linearLayoutLoading?.visibility = View.GONE
+
+                                }
+
+                                Status.LOADING -> {
+                                    _binding?.viewPager?.visibility = View.GONE
+                                    _binding?.circleIndicator?.visibility = View.GONE
+                                    _binding?.homeRecyclerView?.visibility = View.GONE
+                                    _binding?.linearLayoutSearchError?.visibility = View.GONE
+                                    _binding?.linearLayoutLoading?.visibility = View.VISIBLE
+                                }
+
+                            }
+                        }
+
+                        i += 1
+
+                    }
+
                     homeViewModel.getGamesList()
                     listsFromRoom()
+
 
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
@@ -156,29 +218,6 @@ class HomeFragment @Inject constructor(
     private fun searchDatabase(searchString: String) {
         val searchQuery = "%$searchString%"
         homeViewModel.searchGamesList(searchQuery)
-    }
-
-    private fun storeInRoom(list: List<VideoGames>) {
-        var i = 0
-        while (i < list.size) {
-
-            val image = list[i].background_image
-            val name = list[i].name
-            val rating = list[i].rating
-            val released = list[i].released
-            val metacritic = list[i].metacritic
-            val description = ""
-            val favorite = false
-            val id = list[i].id
-
-            homeViewModel.insertGames(
-                Games(image, name, rating, released, metacritic, description, favorite, id)
-            )
-
-            i += 1
-
-        }
-
     }
 
     private fun listsFromRoom() {

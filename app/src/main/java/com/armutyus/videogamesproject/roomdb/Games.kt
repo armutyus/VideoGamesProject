@@ -5,13 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Games")
 data class Games(
-    val background_image: String,
-    val name: String,
-    val rating: Double,
-    val released: String,
-    val metacritic: Int,
-    val description: String,
-    val favorite: Boolean,
+    var background_image: String,
+    var name: String,
+    var rating: Double,
+    var released: String,
+    var metacritic: Int,
+    var description: String,
+    var favorite: Boolean,
     @PrimaryKey
-    val id: Int?
+    var id: Int?
     )
