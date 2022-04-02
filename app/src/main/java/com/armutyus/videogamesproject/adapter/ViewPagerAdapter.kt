@@ -56,7 +56,7 @@ class ViewPagerAdapter @Inject constructor(
 
         holder.itemView.setOnClickListener {
             gameItem = videoGames
-            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(videoGames.id!!)
+            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment()
             Navigation.findNavController(it).navigate(action)
 
         }

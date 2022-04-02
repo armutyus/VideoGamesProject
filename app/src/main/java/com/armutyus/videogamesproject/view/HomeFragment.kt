@@ -45,18 +45,19 @@ class HomeFragment @Inject constructor(
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
-        if (gameItem != null) {
-            listsFromRoom()
-        } else {
+        if (gameItem == null) {
+            homeViewModel.makeGamesResponse()
             observeLiveData()
+        } else {
+            homeViewModel.getGamesList()
+            listsFromRoom()
         }
 
     }
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.makeGamesResponse()
-
+        listsFromRoom()
     }
 
     private fun observeLiveData() {
@@ -102,19 +103,12 @@ class HomeFragment @Inject constructor(
                                 }
 
                                 Status.ERROR -> {
-                                    _binding?.viewPager?.visibility = View.GONE
-                                    _binding?.circleIndicator?.visibility = View.GONE
-                                    _binding?.homeRecyclerView?.visibility = View.GONE
                                     _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
                                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
                                 }
 
                                 Status.LOADING -> {
-                                    _binding?.viewPager?.visibility = View.GONE
-                                    _binding?.circleIndicator?.visibility = View.GONE
-                                    _binding?.homeRecyclerView?.visibility = View.GONE
-                                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                                 }
 
@@ -126,31 +120,21 @@ class HomeFragment @Inject constructor(
                     }
 
                     homeViewModel.getGamesList()
-                    listsFromRoom()
-
 
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
                     _binding?.homeRecyclerView?.visibility = View.VISIBLE
-                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
                 }
 
                 Status.ERROR -> {
-                    _binding?.viewPager?.visibility = View.GONE
-                    _binding?.circleIndicator?.visibility = View.GONE
-                    _binding?.homeRecyclerView?.visibility = View.GONE
                     _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
                 }
 
                 Status.LOADING -> {
-                    _binding?.viewPager?.visibility = View.GONE
-                    _binding?.circleIndicator?.visibility = View.GONE
-                    _binding?.homeRecyclerView?.visibility = View.GONE
-                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                 }
 
@@ -224,13 +208,17 @@ class HomeFragment @Inject constructor(
 
         homeViewModel.videoGamesList.observe(viewLifecycleOwner) {
             val videoGamesFromRoom = it?.toList()
-            val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
-            println("listsFromRoomSize:" + videoGamesFromRoom?.size)
-            println("listCheckSize:$checkSize")
+            //val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
 
-            if (videoGamesFromRoom!!.size == checkSize) {
+            if (videoGamesFromRoom!!.size == 20) {
                 viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0, 3)
-                homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom.subList(3, checkSize)
+                homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom.subList(3, videoGamesFromRoom.size)
+
+                _binding?.linearLayoutLoading?.visibility = View.GONE
+                _binding?.viewPager?.visibility = View.VISIBLE
+                _binding?.circleIndicator?.visibility = View.VISIBLE
+                _binding?.homeRecyclerView?.visibility = View.VISIBLE
+
             }
 
         }
