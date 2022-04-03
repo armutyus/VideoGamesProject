@@ -56,7 +56,7 @@ class DetailsFragment @Inject constructor(
     private fun showDetails() {
 
         val gameImage = fragmentBinding?.detailsGameImage
-        glide.load(gameDetailsItem!!.background_image).fitCenter().into(gameImage!!)
+        glide.load(gameDetailsItem!!.background_image).centerCrop().into(gameImage!!)
         fragmentBinding?.detailsGameText?.text = gameDetailsItem.name
         fragmentBinding?.detailsGameMetacriticText?.text = gameDetailsItem.metacritic.toString()
         fragmentBinding?.detailsGameReleaseText?.text = gameDetailsItem.released

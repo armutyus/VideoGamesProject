@@ -1,6 +1,11 @@
 package com.armutyus.videogamesproject.view
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.text.Html
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -17,7 +22,9 @@ import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
 import me.relex.circleindicator.CircleIndicator3
+import java.util.prefs.Preferences
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 class HomeFragment @Inject constructor(
     private val viewPagerAdapter: ViewPagerAdapter,
@@ -45,12 +52,12 @@ class HomeFragment @Inject constructor(
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
-        if (gameItem == null) {
+        val sharedPreferences = activity?.getSharedPreferences("load_data",0) ?: return
+        if (sharedPreferences.getBoolean("first_time",false)) {
+            listsFromRoom()
+        } else {
             homeViewModel.makeGamesResponse()
             observeLiveData()
-        } else {
-            homeViewModel.getGamesList()
-            listsFromRoom()
         }
 
     }
@@ -84,7 +91,11 @@ class HomeFragment @Inject constructor(
                                     val videoGamesID = gameDetailsResponse.data.id
                                     val videoGamesReleased = gameDetailsResponse.data.released
                                     val videoGamesRating = gameDetailsResponse.data.rating
-                                    val videoGamesDescription = gameDetailsResponse.data.description
+                                    val videoGamesDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        Html.fromHtml(gameDetailsResponse.data.description, Html.FROM_HTML_OPTION_USE_CSS_COLORS).toString()
+                                    } else {
+                                        Html.fromHtml(gameDetailsResponse.data.description).toString()
+                                    }
                                     val videoGamesMetacritic = gameDetailsResponse.data.metacritic
 
                                     homeViewModel.insertGames(
@@ -112,6 +123,12 @@ class HomeFragment @Inject constructor(
                                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                                 }
 
+                            }
+
+                            val sharedPreferences = activity?.getSharedPreferences("load_data",0) ?: return@observe
+                            with(sharedPreferences.edit()) {
+                                putBoolean("first_time",false)
+                                apply()
                             }
                         }
 
