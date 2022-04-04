@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDACAC"
+    android:background="#F0F4C3"
     tools:context=".view.HomeFragment">
 
     <androidx.viewpager2.widget.ViewPager2
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/circleIndicator"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="55dp"
         android:visibility="gone"/>
 
     <LinearLayout
@@ -45,8 +45,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
             android:text="Loading.."
             android:textColor="#000000"
             android:textSize="18sp" />
@@ -63,8 +61,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
             android:text="Nothing to show here.."
             android:textColor="#000000"
             android:textSize="18sp" />

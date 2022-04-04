@@ -5,12 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
+import com.armutyus.videogamesproject.util.Constants.gameItem
+import com.armutyus.videogamesproject.view.HomeFragmentDirections
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject
 
@@ -49,6 +52,13 @@ class ViewPagerAdapter @Inject constructor(
         holder.itemView.apply {
             videoGamesText.text = videoGames.name
             glide.load(videoGames.background_image).centerCrop().into(videoGamesImage)
+        }
+
+        holder.itemView.setOnClickListener {
+            gameItem = videoGames
+            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment()
+            Navigation.findNavController(it).navigate(action)
+
         }
     }
 
