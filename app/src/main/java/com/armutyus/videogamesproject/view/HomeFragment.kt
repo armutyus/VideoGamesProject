@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.Html
 import android.view.Menu
 import android.view.MenuInflater
@@ -18,13 +17,10 @@ import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
 import com.armutyus.videogamesproject.adapter.ViewPagerAdapter
 import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
 import com.armutyus.videogamesproject.roomdb.Games
-import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
 import me.relex.circleindicator.CircleIndicator3
-import java.util.prefs.Preferences
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 class HomeFragment @Inject constructor(
     private val viewPagerAdapter: ViewPagerAdapter,
@@ -34,6 +30,12 @@ class HomeFragment @Inject constructor(
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
     private var gameID = 0
+    private lateinit var sharedPreferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,12 +54,12 @@ class HomeFragment @Inject constructor(
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
-        val sharedPreferences = activity?.getSharedPreferences("load_data",0) ?: return
-        if (sharedPreferences.getBoolean("first_time",false)) {
-            listsFromRoom()
-        } else {
+        if (sharedPreferences.getBoolean("first_time", true)) {
             homeViewModel.makeGamesResponse()
             observeLiveData()
+        } else {
+
+            listsFromRoom()
         }
 
     }
@@ -91,11 +93,16 @@ class HomeFragment @Inject constructor(
                                     val videoGamesID = gameDetailsResponse.data.id
                                     val videoGamesReleased = gameDetailsResponse.data.released
                                     val videoGamesRating = gameDetailsResponse.data.rating
-                                    val videoGamesDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        Html.fromHtml(gameDetailsResponse.data.description, Html.FROM_HTML_OPTION_USE_CSS_COLORS).toString()
-                                    } else {
-                                        Html.fromHtml(gameDetailsResponse.data.description).toString()
-                                    }
+                                    val videoGamesDescription =
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            Html.fromHtml(
+                                                gameDetailsResponse.data.description,
+                                                Html.FROM_HTML_OPTION_USE_CSS_COLORS
+                                            ).toString()
+                                        } else {
+                                            Html.fromHtml(gameDetailsResponse.data.description)
+                                                .toString()
+                                        }
                                     val videoGamesMetacritic = gameDetailsResponse.data.metacritic
 
                                     homeViewModel.insertGames(
@@ -125,18 +132,11 @@ class HomeFragment @Inject constructor(
 
                             }
 
-                            val sharedPreferences = activity?.getSharedPreferences("load_data",0) ?: return@observe
-                            with(sharedPreferences.edit()) {
-                                putBoolean("first_time",false)
-                                apply()
-                            }
                         }
 
                         i += 1
 
                     }
-
-                    homeViewModel.getGamesList()
 
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
@@ -155,6 +155,11 @@ class HomeFragment @Inject constructor(
                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                 }
 
+            }
+
+            with(sharedPreferences.edit()) {
+                putBoolean("first_time", false)
+                apply()
             }
 
         }
@@ -223,13 +228,16 @@ class HomeFragment @Inject constructor(
 
     private fun listsFromRoom() {
 
+        homeViewModel.getGamesList()
+
         homeViewModel.videoGamesList.observe(viewLifecycleOwner) {
             val videoGamesFromRoom = it?.toList()
             //val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
 
             if (videoGamesFromRoom!!.size == 20) {
                 viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0, 3)
-                homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom.subList(3, videoGamesFromRoom.size)
+                homeRecyclerViewAdapter.videoGamesList =
+                    videoGamesFromRoom.subList(3, videoGamesFromRoom.size)
 
                 _binding?.linearLayoutLoading?.visibility = View.GONE
                 _binding?.viewPager?.visibility = View.VISIBLE
