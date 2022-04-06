@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.databinding.DetailsFragmentBinding
 import com.armutyus.videogamesproject.util.Constants
-import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.viewmodel.DetailsViewModel
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject

@@ -1,11 +1,8 @@
 package com.armutyus.videogamesproject.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.armutyus.videogamesproject.R
@@ -29,7 +26,8 @@ class FavoritesFragment @Inject constructor(
         favoritesViewModel = ViewModelProvider(requireActivity())[FavoritesViewModel::class.java]
 
         fragmentBinding?.favoritesRecyclerView?.adapter = favoritesRecyclerViewAdapter
-        fragmentBinding?.favoritesRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        fragmentBinding?.favoritesRecyclerView?.layoutManager =
+            LinearLayoutManager(requireContext())
 
         favoriteListFromRoom()
 

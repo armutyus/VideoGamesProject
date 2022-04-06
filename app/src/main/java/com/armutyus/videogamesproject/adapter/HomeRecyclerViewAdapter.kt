@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
-import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Constants.gameItem
 import com.armutyus.videogamesproject.view.HomeFragmentDirections
@@ -21,7 +20,7 @@ class HomeRecyclerViewAdapter @Inject constructor(
     private val glide: RequestManager
 ) : RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeRecyclerViewHolder>() {
 
-    class HomeRecyclerViewHolder(view: View): RecyclerView.ViewHolder(view)
+    class HomeRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     private val diffUtil = object : DiffUtil.ItemCallback<Games>() {
         override fun areItemsTheSame(oldItem: Games, newItem: Games): Boolean {

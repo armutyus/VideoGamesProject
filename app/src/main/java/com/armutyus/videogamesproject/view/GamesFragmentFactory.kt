@@ -16,7 +16,7 @@ class GamesFragmentFactory @Inject constructor(
 ) : FragmentFactory() {
 
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-        return when(className){
+        return when (className) {
 
             HomeFragment::class.java.name -> HomeFragment(viewPagerAdapter, homeRecyclerViewAdapter)
             FavoritesFragment::class.java.name -> FavoritesFragment(favoritesRecyclerViewAdapter)

@@ -14,4 +14,4 @@ data class Games(
     var favorite: Boolean,
     @PrimaryKey
     var id: Int?
-    )
+)
