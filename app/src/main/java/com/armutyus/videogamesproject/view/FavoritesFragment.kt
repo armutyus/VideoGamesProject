@@ -26,7 +26,7 @@ class FavoritesFragment @Inject constructor(
         val binding = FragmentFavoritesBinding.bind(view)
         fragmentBinding = binding
 
-        favoritesViewModel = ViewModelProvider(this)[FavoritesViewModel::class.java]
+        favoritesViewModel = ViewModelProvider(requireActivity())[FavoritesViewModel::class.java]
 
         fragmentBinding?.favoritesRecyclerView?.adapter = favoritesRecyclerViewAdapter
         fragmentBinding?.favoritesRecyclerView?.layoutManager = LinearLayoutManager(requireContext())

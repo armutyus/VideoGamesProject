@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.armutyus.videogamesproject.databinding.ActivityMainBinding
@@ -32,22 +34,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         navController = navHostFragment.navController
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_favorites
+                R.id.homeFragment, R.id.favoritesFragment
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         navView.setOnItemSelectedListener { item ->
-            if(item.itemId != navView.selectedItemId)
-                NavigationUI.onNavDestinationSelected(item, navController)
+            if(item.itemId != navView.selectedItemId) {
+                onNavDestinationSelected(item, navController)
+            }
             true
+        }
+
+        navView.setOnItemReselectedListener { selectedItem ->
+            if (selectedItem.itemId == navView.selectedItemId) {
+                onNavDestinationSelected(selectedItem,navController)
+            }
         }
     }
 

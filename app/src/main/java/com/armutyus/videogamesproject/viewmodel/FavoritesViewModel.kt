@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     private val repoInterface: VideoGamesRepoInterface
-): ViewModel() {
+) : ViewModel() {
 
     private val videoGamesFavorite = MutableLiveData<List<Games>>()
     val videoGamesFavoritesList: LiveData<List<Games>>
