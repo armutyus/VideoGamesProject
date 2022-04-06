@@ -11,16 +11,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.roomdb.Games
-import com.armutyus.videogamesproject.util.Constants.gameItem
-import com.armutyus.videogamesproject.view.HomeFragmentDirections
+import com.armutyus.videogamesproject.util.Constants
+import com.armutyus.videogamesproject.view.FavoritesFragmentDirections
 import com.bumptech.glide.RequestManager
 import javax.inject.Inject
 
-class HomeRecyclerViewAdapter @Inject constructor(
+class FavoritesRecyclerViewAdapter @Inject constructor(
     private val glide: RequestManager
-) : RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeRecyclerViewHolder>() {
+) : RecyclerView.Adapter<FavoritesRecyclerViewAdapter.FavoritesRecyclerViewHolder>() {
 
-    class HomeRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    class FavoritesRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     private val diffUtil = object : DiffUtil.ItemCallback<Games>() {
         override fun areItemsTheSame(oldItem: Games, newItem: Games): Boolean {
@@ -34,22 +34,23 @@ class HomeRecyclerViewAdapter @Inject constructor(
 
     private val recyclerListDiffer = AsyncListDiffer(this, diffUtil)
 
-    var videoGamesList: List<Games>
+    var favoriteVideoGamesList: List<Games>
         get() = recyclerListDiffer.currentList
         set(value) = recyclerListDiffer.submitList(value)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRecyclerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesRecyclerViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.home_row, parent, false)
-        return HomeRecyclerViewHolder(view)
+            LayoutInflater.from(parent.context).inflate(R.layout.favorites_row, parent, false)
+        return FavoritesRecyclerViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {
-        val videoGamesImage = holder.itemView.findViewById<ImageView>(R.id.homeImage)
-        val videoGamesText = holder.itemView.findViewById<TextView>(R.id.homeGameText)
-        val videoGamesRatingText = holder.itemView.findViewById<TextView>(R.id.homeRatingText)
-        val videoGamesReleasedText = holder.itemView.findViewById<TextView>(R.id.homeReleasedText)
-        val videoGames = videoGamesList[position]
+    override fun onBindViewHolder(holder: FavoritesRecyclerViewHolder, position: Int) {
+        val videoGamesImage = holder.itemView.findViewById<ImageView>(R.id.favoritesImage)
+        val videoGamesText = holder.itemView.findViewById<TextView>(R.id.favoritesGameText)
+        val videoGamesRatingText = holder.itemView.findViewById<TextView>(R.id.favoritesRatingText)
+        val videoGamesReleasedText =
+            holder.itemView.findViewById<TextView>(R.id.favoritesReleasedText)
+        val videoGames = favoriteVideoGamesList[position]
         holder.itemView.apply {
             videoGamesText.text = videoGames.name
             videoGamesRatingText.text = videoGames.rating.toString()
@@ -58,8 +59,8 @@ class HomeRecyclerViewAdapter @Inject constructor(
         }
 
         holder.itemView.setOnClickListener {
-            gameItem = videoGames
-            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment()
+            Constants.gameItem = videoGames
+            val action = FavoritesFragmentDirections.actionNavigationFavoritesToDetailsFragment()
             Navigation.findNavController(it).navigate(action)
 
         }
@@ -67,6 +68,6 @@ class HomeRecyclerViewAdapter @Inject constructor(
     }
 
     override fun getItemCount(): Int {
-        return videoGamesList.size
+        return favoriteVideoGamesList.size
     }
 }

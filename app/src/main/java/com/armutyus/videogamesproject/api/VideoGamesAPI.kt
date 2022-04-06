@@ -19,6 +19,6 @@ interface VideoGamesAPI {
     suspend fun getGamesDetails(
         @Path("id") id: Int,
         @Query("key") apiKey: String = API_KEY
-    ): GameDetails
+    ): Response<GameDetails>
 
 }

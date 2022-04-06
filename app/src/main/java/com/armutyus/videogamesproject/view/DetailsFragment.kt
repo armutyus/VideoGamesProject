@@ -1,25 +1,67 @@
 package com.armutyus.videogamesproject.view
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.databinding.DetailsFragmentBinding
+import com.armutyus.videogamesproject.util.Constants
 import com.armutyus.videogamesproject.viewmodel.DetailsViewModel
+import com.bumptech.glide.RequestManager
+import javax.inject.Inject
 
-class DetailsFragment : Fragment(R.layout.details_fragment) {
+class DetailsFragment @Inject constructor(
+    private val glide: RequestManager
+) : Fragment(R.layout.details_fragment) {
 
     private var fragmentBinding: DetailsFragmentBinding? = null
-    private lateinit var viewModel: DetailsViewModel
+    private lateinit var detailsViewModel: DetailsViewModel
+    private val gameDetailsItem = Constants.gameItem
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
         val binding = DetailsFragmentBinding.bind(view)
         fragmentBinding = binding
+
+        detailsViewModel = ViewModelProvider(requireActivity())[DetailsViewModel::class.java]
+
+        if (gameDetailsItem != null) {
+            showDetails()
+        }
+
+        fragmentBinding?.favButton?.apply {
+            if (gameDetailsItem!!.favorite) {
+                this.setImageResource(R.drawable.ic_favorite_true)
+            } else {
+                this.setImageResource(R.drawable.ic_favorite_false)
+            }
+
+            this.setOnClickListener {
+                gameDetailsItem.favorite = !gameDetailsItem.favorite
+                if (gameDetailsItem.favorite) {
+                    this.setImageResource(R.drawable.ic_favorite_true)
+                } else {
+                    this.setImageResource(R.drawable.ic_favorite_false)
+                }
+                detailsViewModel.updateGames(gameDetailsItem)
+            }
+
+
+        }
+
+    }
+
+    private fun showDetails() {
+
+        val gameImage = fragmentBinding?.detailsGameImage
+        glide.load(gameDetailsItem!!.background_image).centerCrop().into(gameImage!!)
+        fragmentBinding?.detailsGameText?.text = gameDetailsItem.name
+        fragmentBinding?.detailsGameMetacriticText?.text = gameDetailsItem.metacritic.toString()
+        fragmentBinding?.detailsGameReleaseText?.text = gameDetailsItem.released
+        fragmentBinding?.detailsGameDescriptionText?.text = gameDetailsItem.description
+
+
     }
 
     override fun onDestroyView() {

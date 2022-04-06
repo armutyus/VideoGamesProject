@@ -1,14 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A2F4E1"
+    android:orientation="vertical"
+    android:background="#F0F4C3"
+    android:paddingBottom="55dp"
     tools:context=".view.DetailsFragment">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/descriptionLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+        <ImageView
+            android:id="@+id/detailsGameImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:padding="5dp"
+            tools:ignore="ContentDescription" />
 
-</FrameLayout>
+        <ImageButton
+            android:id="@+id/fav_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/detailsGameImage"
+            android:layout_alignBottom="@+id/detailsGameImage"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:src="@drawable/ic_favorite_false"
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/detailsGameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detailsGameImage"
+            android:text="Name of the Game"
+            android:textColor="#9E2905"
+            android:layout_marginStart="15dp"
+            android:textSize="25sp" />
+        <TextView
+            android:id="@+id/detailsGameReleaseText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Release Date"
+            android:textSize="16sp"
+            android:layout_below="@+id/detailsGameText"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/detailsGameMetacriticText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Metacritic"
+            android:textSize="16sp"
+            android:layout_below="@+id/detailsGameReleaseText"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/detailsGameDescriptionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="18sp"
+            android:layout_below="@+id/detailsGameMetacriticText"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="@color/black"
+            />
+    </RelativeLayout>
+
+</ScrollView>
