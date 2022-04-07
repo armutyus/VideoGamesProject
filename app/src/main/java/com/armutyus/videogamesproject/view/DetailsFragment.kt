@@ -9,6 +9,10 @@ import com.armutyus.videogamesproject.databinding.DetailsFragmentBinding
 import com.armutyus.videogamesproject.util.Constants
 import com.armutyus.videogamesproject.viewmodel.DetailsViewModel
 import com.bumptech.glide.RequestManager
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
 class DetailsFragment @Inject constructor(
@@ -18,9 +22,16 @@ class DetailsFragment @Inject constructor(
     private var fragmentBinding: DetailsFragmentBinding? = null
     private lateinit var detailsViewModel: DetailsViewModel
     private val gameDetailsItem = Constants.gameItem
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, "GameDetails")
+        }
+
         val binding = DetailsFragmentBinding.bind(view)
         fragmentBinding = binding
 
@@ -41,6 +52,10 @@ class DetailsFragment @Inject constructor(
                 gameDetailsItem.favorite = !gameDetailsItem.favorite
                 if (gameDetailsItem.favorite) {
                     this.setImageResource(R.drawable.ic_favorite_true)
+                    firebaseAnalytics = Firebase.analytics
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
+                        param(FirebaseAnalytics.Param.ITEM_NAME, "FavoriteSelected")
+                    }
                 } else {
                     this.setImageResource(R.drawable.ic_favorite_false)
                 }

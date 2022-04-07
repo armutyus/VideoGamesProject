@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         navView.setOnItemSelectedListener { item ->
             if (item.itemId != navView.selectedItemId) {
+                println("current: " + navView.selectedItemId.toString())
+                println("selected: " + item.itemId.toString())
                 onNavDestinationSelected(item, navController)
             }
             true
@@ -53,9 +55,13 @@ class MainActivity : AppCompatActivity() {
 
         navView.setOnItemReselectedListener { selectedItem ->
             if (selectedItem.itemId == navView.selectedItemId) {
+                println("current: " + navView.selectedItemId.toString())
+                println("selected: " + selectedItem.itemId.toString())
                 onNavDestinationSelected(selectedItem, navController)
             }
         }
+
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

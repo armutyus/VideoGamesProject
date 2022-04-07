@@ -19,6 +19,10 @@ import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import me.relex.circleindicator.CircleIndicator3
 import javax.inject.Inject
 
@@ -31,6 +35,8 @@ class HomeFragment @Inject constructor(
     private lateinit var homeViewModel: HomeViewModel
     private var gameID = 0
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +45,12 @@ class HomeFragment @Inject constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, "Home")
+        }
+
         setHasOptionsMenu(true)
         val binding = FragmentHomeBinding.bind(view)
         _binding = binding

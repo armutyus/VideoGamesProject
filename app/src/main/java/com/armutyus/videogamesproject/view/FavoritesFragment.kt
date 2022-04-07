@@ -9,6 +9,10 @@ import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.FavoritesRecyclerViewAdapter
 import com.armutyus.videogamesproject.databinding.FragmentFavoritesBinding
 import com.armutyus.videogamesproject.viewmodel.FavoritesViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
 class FavoritesFragment @Inject constructor(
@@ -17,9 +21,16 @@ class FavoritesFragment @Inject constructor(
 
     private var fragmentBinding: FragmentFavoritesBinding? = null
     private lateinit var favoritesViewModel: FavoritesViewModel
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, "Favorites")
+        }
+
         val binding = FragmentFavoritesBinding.bind(view)
         fragmentBinding = binding
 
@@ -40,15 +51,15 @@ class FavoritesFragment @Inject constructor(
 
     private fun favoriteListFromRoom() {
         favoritesViewModel.videoGamesFavoritesList.observe(viewLifecycleOwner) {
-            val favoritesFromRoom = it?.toList()
 
-            if (favoritesFromRoom == null) {
-
+            if (favoritesViewModel.videoGamesFavoritesList.value?.size == 0) {
                 fragmentBinding?.linearLayoutError?.visibility = View.VISIBLE
-
             } else {
-                favoritesRecyclerViewAdapter.favoriteVideoGamesList = favoritesFromRoom
+                fragmentBinding?.linearLayoutError?.visibility = View.GONE
             }
+
+            val favoritesFromRoom = it?.toList()
+            favoritesRecyclerViewAdapter.favoriteVideoGamesList = favoritesFromRoom!!
         }
     }
 
