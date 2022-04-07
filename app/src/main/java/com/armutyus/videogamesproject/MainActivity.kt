@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.armutyus.videogamesproject.databinding.ActivityMainBinding
@@ -46,18 +45,14 @@ class MainActivity : AppCompatActivity() {
 
         navView.setOnItemSelectedListener { item ->
             if (item.itemId != navView.selectedItemId) {
-                println("current: " + navView.selectedItemId.toString())
-                println("selected: " + item.itemId.toString())
-                onNavDestinationSelected(item, navController)
+                navController.navigate(item.itemId)
             }
             true
         }
 
         navView.setOnItemReselectedListener { selectedItem ->
             if (selectedItem.itemId == navView.selectedItemId) {
-                println("current: " + navView.selectedItemId.toString())
-                println("selected: " + selectedItem.itemId.toString())
-                onNavDestinationSelected(selectedItem, navController)
+                navController.navigate(navView.selectedItemId)
             }
         }
 
