@@ -1,22 +1,28 @@
 package com.armutyus.videogamesproject.view
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.armutyus.videogamesproject.R
 import com.armutyus.videogamesproject.adapter.HomeRecyclerViewAdapter
 import com.armutyus.videogamesproject.adapter.ViewPagerAdapter
 import com.armutyus.videogamesproject.databinding.FragmentHomeBinding
-import com.armutyus.videogamesproject.model.VideoGames
 import com.armutyus.videogamesproject.roomdb.Games
 import com.armutyus.videogamesproject.util.Status
 import com.armutyus.videogamesproject.viewmodel.HomeViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 import me.relex.circleindicator.CircleIndicator3
 import javax.inject.Inject
 
@@ -27,9 +33,24 @@ class HomeFragment @Inject constructor(
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
+    private var gameID = 0
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, "Home")
+        }
+
         setHasOptionsMenu(true)
         val binding = FragmentHomeBinding.bind(view)
         _binding = binding
@@ -45,52 +66,116 @@ class HomeFragment @Inject constructor(
         _binding?.homeRecyclerView?.adapter = homeRecyclerViewAdapter
         _binding?.homeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
-        observeLiveData()
+        if (sharedPreferences.getBoolean("first_time", true)) {
+            homeViewModel.makeGamesResponse()
+            observeLiveData()
+        } else {
+
+            listsFromRoom()
+        }
 
     }
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.makeGamesResponse()
-        homeViewModel.getGamesList()
+        listsFromRoom()
     }
 
     private fun observeLiveData() {
-        homeViewModel.gamesResponseList.observe(viewLifecycleOwner, Observer {
+        homeViewModel.gamesResponseList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
 
                     val videoGamesList = it.data?.results?.toList()
+                    var i = 0
+                    while (i < videoGamesList!!.size) {
+
+                        gameID = videoGamesList[i].id
+
+                        homeViewModel.gameDetailResponse(gameID)
+
+                        homeViewModel.gamesDetails.observe(viewLifecycleOwner) { gameDetailsResponse ->
+                            when (gameDetailsResponse.status) {
+
+                                Status.SUCCESS -> {
+
+                                    val videoGamesImage =
+                                        gameDetailsResponse.data!!.background_image
+                                    val videoGamesName = gameDetailsResponse.data.name
+                                    val videoGamesID = gameDetailsResponse.data.id
+                                    val videoGamesReleased = gameDetailsResponse.data.released
+                                    val videoGamesRating = gameDetailsResponse.data.rating
+                                    val videoGamesDescription =
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            Html.fromHtml(
+                                                gameDetailsResponse.data.description,
+                                                Html.FROM_HTML_OPTION_USE_CSS_COLORS
+                                            ).toString()
+                                        } else {
+                                            Html.fromHtml(gameDetailsResponse.data.description)
+                                                .toString()
+                                        }
+                                    val videoGamesMetacritic = gameDetailsResponse.data.metacritic
+
+                                    homeViewModel.insertGames(
+                                        Games(
+                                            videoGamesImage,
+                                            videoGamesName,
+                                            videoGamesRating,
+                                            videoGamesReleased,
+                                            videoGamesMetacritic,
+                                            videoGamesDescription,
+                                            false,
+                                            videoGamesID
+                                        )
+                                    )
+
+                                }
+
+                                Status.ERROR -> {
+                                    _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
+                                    _binding?.linearLayoutLoading?.visibility = View.GONE
+
+                                }
+
+                                Status.LOADING -> {
+                                    _binding?.linearLayoutLoading?.visibility = View.VISIBLE
+                                }
+
+                            }
+
+                        }
+
+                        i += 1
+
+                    }
+
                     _binding?.viewPager?.visibility = View.VISIBLE
                     _binding?.circleIndicator?.visibility = View.VISIBLE
                     _binding?.homeRecyclerView?.visibility = View.VISIBLE
-                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
-
-                    storeInRoom(videoGamesList!!)
-                    listsFromRoom()
 
                 }
 
                 Status.ERROR -> {
-                    _binding?.viewPager?.visibility = View.GONE
-                    _binding?.circleIndicator?.visibility = View.GONE
-                    _binding?.homeRecyclerView?.visibility = View.GONE
                     _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
                     _binding?.linearLayoutLoading?.visibility = View.GONE
 
                 }
 
                 Status.LOADING -> {
-                    _binding?.viewPager?.visibility = View.GONE
-                    _binding?.circleIndicator?.visibility = View.GONE
-                    _binding?.homeRecyclerView?.visibility = View.GONE
-                    _binding?.linearLayoutSearchError?.visibility = View.GONE
                     _binding?.linearLayoutLoading?.visibility = View.VISIBLE
                 }
+
             }
 
-        })
+            with(sharedPreferences.edit()) {
+                putBoolean("first_time", false)
+                apply()
+            }
+
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -121,13 +206,18 @@ class HomeFragment @Inject constructor(
             _binding?.linearLayoutLoading?.visibility = View.GONE
             searchDatabase(searchString)
 
-            homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner, Observer {
+            homeViewModel.searchGamesFromRoomList.observe(viewLifecycleOwner) {
                 val searchList = it?.toList()
                 homeRecyclerViewAdapter.videoGamesList = searchList!!
 
-                //if searchGamesFromRoomList == 0 error view visible
+                if (searchList.isEmpty()) {
+                    _binding?.linearLayoutSearchError?.visibility = View.VISIBLE
+                    _binding?.linearLayoutLoading?.visibility = View.GONE
+                } else {
+                    _binding?.linearLayoutSearchError?.visibility = View.GONE
+                }
 
-            })
+            }
 
         } else {
 
@@ -148,36 +238,27 @@ class HomeFragment @Inject constructor(
         homeViewModel.searchGamesList(searchQuery)
     }
 
-    private fun storeInRoom(list: List<VideoGames>) {
-        var i = 0
-        while (i < list.size) {
-
-            val image = list[i].background_image
-            val name = list[i].name
-            val rating = list[i].rating
-            val released = list[i].released
-            val metacritic = list[i].metacritic
-            val description = ""
-            val favorite = false
-            val id = list[i].id
-
-            homeViewModel.insertGames(
-                Games(image, name, rating, released, metacritic, description, favorite, id)
-            )
-
-            i += 1
-
-        }
-
-    }
-
     private fun listsFromRoom() {
 
-        homeViewModel.videoGamesList.observe(viewLifecycleOwner, Observer {
+        homeViewModel.getGamesList()
+
+        homeViewModel.videoGamesList.observe(viewLifecycleOwner) {
             val videoGamesFromRoom = it?.toList()
-            homeRecyclerViewAdapter.videoGamesList = videoGamesFromRoom?.subList(3,it.size)!!
-            viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0,3)
-        })
+            //val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
+
+            if (videoGamesFromRoom!!.size == 20) {
+                viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0, 3)
+                homeRecyclerViewAdapter.videoGamesList =
+                    videoGamesFromRoom.subList(3, videoGamesFromRoom.size)
+
+                _binding?.linearLayoutLoading?.visibility = View.GONE
+                _binding?.viewPager?.visibility = View.VISIBLE
+                _binding?.circleIndicator?.visibility = View.VISIBLE
+                _binding?.homeRecyclerView?.visibility = View.VISIBLE
+
+            }
+
+        }
 
     }
 

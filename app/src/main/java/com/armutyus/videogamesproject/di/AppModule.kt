@@ -30,7 +30,7 @@ object AppModule {
     @Singleton
     @Provides
     fun injectRoomDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context,GamesDB::class.java,"GamesDB"
+        context, GamesDB::class.java, "GamesDB"
     ).build()
 
     @Singleton
@@ -56,7 +56,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun injectRepo(gamesDao: GamesDao, videoGamesAPI: VideoGamesAPI) = VideoGamesRepo(gamesDao, videoGamesAPI) as VideoGamesRepoInterface
+    fun injectRepo(gamesDao: GamesDao, videoGamesAPI: VideoGamesAPI) =
+        VideoGamesRepo(gamesDao, videoGamesAPI) as VideoGamesRepoInterface
 
     @Singleton
     @Provides

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.armutyus.videogamesproject.model.VideoGames
+import com.armutyus.videogamesproject.model.GameDetails
 import com.armutyus.videogamesproject.model.VideoGamesResponse
 import com.armutyus.videogamesproject.repo.VideoGamesRepoInterface
 import com.armutyus.videogamesproject.roomdb.Games
@@ -12,6 +12,7 @@ import com.armutyus.videogamesproject.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,19 +45,42 @@ class HomeViewModel @Inject constructor(
 
     fun getGamesList() {
         CoroutineScope(Dispatchers.IO).launch {
-            val videoGamesFromRoom = repoInterface.getGamesList()
-            videoGames.postValue(videoGamesFromRoom)
+            repoInterface.getGamesList().collectLatest {
+                videoGames.postValue(it)
+            }
         }
     }
 
     fun searchGamesList(searchString: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val searchGamesInRoom = repoInterface.searchGames(searchString)
-            searchVideoGames.postValue(searchGamesInRoom)
+            repoInterface.searchGames(searchString).collectLatest {
+                searchVideoGames.postValue(it)
+            }
         }
     }
 
-    /*fun setChosenCharacter(result: Result) {
-        mutableChosenChar.value = result
-    }*/
+    //GameDetails
+    private val gamesDetailsResponse = MutableLiveData<Resource<GameDetails>>()
+    val gamesDetails: LiveData<Resource<GameDetails>>
+        get() = gamesDetailsResponse
+
+    private val videoGamesDetails = MutableLiveData<Games>()
+    val videoGamesDetailsById: LiveData<Games>
+        get() = videoGamesDetails
+
+    fun gameDetailResponse(id: Int) {
+        viewModelScope.launch {
+            val response = repoInterface.getGamesById(id)
+            gamesDetailsResponse.value = response
+        }
+    }
+
+    fun getGamesDetailsById(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            repoInterface.getGamesByIdRoom(id).collectLatest {
+                videoGamesDetails.postValue(it)
+            }
+        }
+    }
+
 }

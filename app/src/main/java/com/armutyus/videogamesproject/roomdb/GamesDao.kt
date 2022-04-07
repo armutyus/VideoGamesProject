@@ -1,25 +1,25 @@
 package com.armutyus.videogamesproject.roomdb
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GamesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(games: Games)
+    suspend fun insert(games: Games)
 
     @Update
-    fun update(games: Games)
+    suspend fun update(games: Games)
 
-    /*@Query("SELECT * FROM Games WHERE id = :id")
-    fun getGamesById(id: Int): Games?*/
+    @Query("SELECT * FROM Games WHERE id = :id")
+    fun getGamesByIdRoom(id: Int): Flow<Games>
 
     @Query("SELECT * FROM Games")
-    fun getGamesList(): MutableList<Games>
+    fun getGamesList(): Flow<List<Games>>
 
     @Query("SELECT * FROM Games WHERE favorite = 1")
-    fun getFavoriteGamesList(): LiveData<List<Games>>
+    fun getFavoriteGamesList(): Flow<List<Games>>
 
     @Query("SELECT * FROM Games WHERE name LIKE :searchString")
-    fun searchGames(searchString: String): MutableList<Games>
+    fun searchGames(searchString: String): Flow<List<Games>>
 }
