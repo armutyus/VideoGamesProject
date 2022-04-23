@@ -244,9 +244,9 @@ class HomeFragment @Inject constructor(
 
         homeViewModel.videoGamesList.observe(viewLifecycleOwner) {
             val videoGamesFromRoom = it?.toList()
-            //val checkSize = homeViewModel.gamesResponseList.value!!.data!!.results.size
+            val checkSize = homeViewModel.videoGamesList.value!!.size
 
-            if (videoGamesFromRoom!!.size == 20) {
+            if (videoGamesFromRoom!!.size == checkSize) {
                 viewPagerAdapter.videoGamesList = videoGamesFromRoom.subList(0, 3)
                 homeRecyclerViewAdapter.videoGamesList =
                     videoGamesFromRoom.subList(3, videoGamesFromRoom.size)
